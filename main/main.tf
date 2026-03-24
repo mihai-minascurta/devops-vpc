@@ -13,6 +13,7 @@ data "aws_ami" "ubuntu" {
 #Firewall
 resource "aws_security_group" "andrei-sg" {
   name = "${var.project_name}"
+  vpc_id = aws_vpc.andrei_vpc.id # Connect our VPC to the our firewall
 
   ingress {
     description = "Rules for HTTP"
@@ -35,6 +36,7 @@ resource "aws_instance" "andrei_server" {
   ami = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
 
+  subnet_id = aws_subnet.public_subnet.id 
   vpc_security_group_ids =[aws_security_group.andrei-sg.id]
 
   user_data = <<-EOF
