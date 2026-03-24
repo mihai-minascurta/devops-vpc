@@ -67,7 +67,7 @@ resource "aws_route_table_association" "public_assoc" {
 
 # 7. We need an Elastic IP ( Permanent IP Adrees ) for DB -> Internet communication
 
-resource "awp_eip" "nat_eip" {
+resource "aws_eip" "nat_eip" {
   domain = "vpc"
 }
 
@@ -103,3 +103,4 @@ resource "aws_route_table_association" "private_assoc" {
   subnet_id = aws_subnet.private_subnet.id
   route_table_id = aws_route_table.private_route_table.id
 }
+
