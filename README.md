@@ -96,10 +96,11 @@ devops-vpc/
 **🟢 High-Impact Wins:**
 * **End-to-End Automation:** Eliminated manual `terraform` CLI commands by integrating the entire workflow into Jenkins, complete with user-prompted `apply` and `destroy` safety checks.
 * **Modular Backend Architecture:** Successfully refactored the infrastructure into two distinct folders (`main` and `bootstrap`), each with its own dedicated `Jenkinsfile`, ensuring a completely decoupled approach to dependency storage and environment state.
+* **Secure Private Routing (NAT Gateways):** Provisioned NAT Gateways with Elastic IPs, granting isolated private subnets secure, outbound-only internet access for essential patching without exposing them to inbound internet threats.
 
 **🔧 Technical Debt / Next Steps:**
-* **NAT Gateways:** Currently, private subnets lack outbound internet access. Future iterations will provision NAT Gateways to allow secure outbound patching.
-* **VPC Endpoints:** Plan to implement AWS PrivateLink (VPC Endpoints) to allow internal services to communicate with AWS APIs (like S3) without traversing the public internet.
+* **Configuration Management (Ansible):** AWS Infrastructure is currently provisioned but unconfigured. The next phase will integrate Ansible to dynamically automate software installation (e.g., Docker, Nginx) across all EC2 nodes.
+* **VPC Endpoints:** Plan to implement AWS PrivateLink (VPC Endpoints) to allow internal services to communicate with AWS APIs (like S3) securely, without traversing the public internet.
 
 <br>
 
