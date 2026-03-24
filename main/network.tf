@@ -1,5 +1,4 @@
-# 1. The Main Fence (The VPC)
-# 10.0.0.0/16 gives us 65,536 potential IP addresses to use.
+# 1. Main VPC
 resource "aws_vpc" "andrei_vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_support   = true
@@ -10,8 +9,7 @@ resource "aws_vpc" "andrei_vpc" {
   }
 }
 
-# 2. The Web Zone (Public Subnet)
-# We carve out a smaller chunk (256 IPs) for our web servers.
+# 2. Public Subnet (For Web Servers)
 resource "aws_subnet" "public_subnet" {
   vpc_id                  = aws_vpc.andrei_vpc.id
   cidr_block              = "10.0.1.0/24"
@@ -23,8 +21,7 @@ resource "aws_subnet" "public_subnet" {
   }
 }
 
-# 3. The Database Zone (Private Subnet)
-# Another 256 IPs, completely isolated. Notice map_public_ip_on_launch is missing!
+# 3. Private Subnet (for DB)
 resource "aws_subnet" "private_subnet" {
   vpc_id            = aws_vpc.andrei_vpc.id
   cidr_block        = "10.0.2.0/24"
@@ -33,4 +30,37 @@ resource "aws_subnet" "private_subnet" {
   tags = {
     Name = "Andrei-Private-Subnet"
   }
+}
+
+# 4. Internet Gateway (the door for our VPC)
+
+resource "aws_internet_gateway" "andrei_igw" {
+  vpc_id = aws_vpc.andrei_vpc.id
+
+  tags = {
+    Name = "Andrei-IGW"
+  }
+}
+
+# 5. Route Table (Any 0.0.0.0/0 ip [the internet] is obligated to go through Internet Gatway)
+
+resource "aws_route_table" "public_route_table" {
+  vpc_id = aws_vpc.andrei_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.andrei_igw.id
+  }
+
+  tags = {
+    Name = "Andrei-Public-RouteTable"
+  }
+
+}
+
+# 6. Connect Public Subnet with Route table
+
+resource "aws_route_table_association" "public_assoc" {
+  subnet_id = aws_subnet.public_subnet.id
+  route_table_id = aws_route_table.public_route_table.id
 }
